@@ -66,7 +66,7 @@ run:
 	}
 
 	cout << print("(2/2) 영상 내려받는 중...") << endl << endl
-		<< "영상 해상도: " << json_h[json_last_list] << "P" << endl
+		<< "영상 해상도: " << json_w[json_last_list] << "P" << endl
 		<< "파일 사이즈: " << (float)json_fsz[json_last_list] / (1024 * 1024) << "MB" << endl;
 
 	VDLDefault::Download(json_url[json_last_list], title + L".mp4");
