@@ -29,10 +29,18 @@ cpr::Response VDLDefault::LoadPage(string url, cpr::Parameters param)
 	return req;
 }
 
+cpr::Response VDLDefault::LoadPage(string url, cpr::Payload param)
+{
+	auto req = cpr::Get(cpr::Url{ url }, param);
+	return req;
+}
+
 unsigned int VDLDefault::Categorize(string url)
 {
 	if (url.find(VDLDefault::URL_VLIVE) != string::npos)
 		return TYPE_VLIVE;
+	else if (url.find(VDLDefault::URL_VLIVE_CH) != string::npos)
+		return TYPE_VLIVE_CHANNEL;
 	else if (url.find(VDLDefault::URL_NAVER) != string::npos)
 		return TYPE_TVCAST;
 	else if (url.find(VDLDefault::URL_DAUM) != string::npos)
@@ -184,6 +192,12 @@ bool VDLModule::LoadModule(uint16_t magic)
 		r = m->Run();
 		delete m;
 	}
+	if (magic == TYPE_VLIVE_CHANNEL)
+	{
+		VLive_Ch *vc = new VLive_Ch(this->url);
+		r = vc->Run();
+		delete vc;
+	}
 	else if (magic == TYPE_TVCAST)
 	{
 		Naver *m = new Naver(this->url);
@@ -214,11 +228,12 @@ void VDLModule::printInit()
 {
 	using namespace VDLDefault;
 
-	UnicodeString noti_u = noti_u.fromUTF8(LoadPage("https://projectn.tk/notice.php", cpr::Parameters{ { "ver", VDL_VERSION },{ "codename", VDL_CODENAME } }).text);
+	UnicodeString noti_u = noti_u.fromUTF8(LoadPage("https://projectn.tk/notice.php", 
+		cpr::Parameters{ { "ver", VDL_VERSION },{ "codename", VDL_CODENAME } }).text);
 	wstring noti = noti_u.getBuffer();
 
 	cout << setw(80) << setfill('=') << "" << endl;
-	cout << print("V App 영상 다운로더 v.", 0) << (*this) << "-rc1 by Moonrise° (DCInside 러블리즈 갤러리)" << endl
+	cout << print("V App 영상 다운로더 v.") << (*this) << "-rc2 by Moonrise° (DCInside 러블리즈 갤러리)" << endl
 		<< "사용법은 게시글을 참조해주세요." << endl;
 	cout << "Codename: " << VDL_CODENAME << endl;
 	cout << setw(80) << setfill('=') << "" << endl << "<공지사항>" << endl;
@@ -260,6 +275,20 @@ vector<string> VDLModule::Split(string s, const string &r)
 	return el;
 }
 
+vector<string> VDLModule::FetchVideoList()
+{
+	return vector<string>();
+}
+
+Json::Value VDLModule::ParseJson(const string & s)
+{
+	Json::Reader json_reader;
+	Json::Value json_root;
+
+	json_reader.parse(s, json_root);
+	return json_root;
+}
+
 ostream & operator<<(ostream & os, VDLModule & m)
 {
 	cerr << m.ver[0] << "." << m.ver[1] << "." << m.ver[2];
@@ -268,26 +297,7 @@ ostream & operator<<(ostream & os, VDLModule & m)
 
 vector<string> VLive::Parse(const string &s, const string r)
 {
-	smatch sm;
-	vector<string> el;
-	regex re(r);
-	if (regex_search(s, sm, re))
-	{
-		for (size_t i = 0; i < sm.size(); i++)
-		{
-			el.push_back(sm[i]);
-		}
-	}
-	return el;
-}
-
-Json::Value VLive::ParseJson(const string & s)
-{
-	Json::Reader json_reader;
-	Json::Value json_root;
-	
-	json_reader.parse(s, json_root);
-	return json_root;
+	return VDLModule::Parse(s, r);
 }
 
 int VLive_Live::PostProcess(wstring f, size_t flag)
@@ -327,4 +337,33 @@ bool VLive_Live::Download(string url, wstring fname)
 	curl_easy_cleanup(curl);
 	of.close();
 	return true;
+}
+
+vector<string> VLive_Ch::FetchVideoList()
+{
+	vector<string> list_v;
+
+	int chSeq = VDLModule::ParseJson(VDLDefault::LoadPage(
+		VDLDefault::VLIVE_CH_INTERNAL_INFO_JSON,
+		cpr::Parameters{
+			{ "app_id",app_id },
+			{ "channelCode",code_channel }
+	}).text)["result"]["channelSeq"].asInt();
+
+	Json::Value vod_list=ParseJson(VDLDefault::LoadPage(
+		VDLDefault::VLIVE_CH_INTERNAL_VOD_LIST,
+		cpr::Parameters{
+			{"app_id",app_id},
+			{"channelSeq",to_string(chSeq)},
+			{"maxNumOfRows",to_string(10000)}
+	}).text)["result"];
+
+	cout << VDLDefault::print("[2/3] 영상 리스트 불러오는 중") << endl;
+	for (int i = 0; i <vod_list["totalVideoCount"].asInt(); i++) {
+		string url = VDLDefault::URL_VLIVE + "/" + vod_list["videoList"][i]["videoSeq"].asString();
+		list_v.push_back(url);
+	}
+	list_v.push_back(vod_list["totalVideoCount"].asString());
+
+	return list_v;
 }
