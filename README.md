@@ -78,14 +78,19 @@ This program is licensed under the Apache Software License, Version 2.0.
 
 
  - Cpr (https://github.com/whoshuu/cpr)
-Copyright (c) 2017 Huu Nguyen, licensed under the MIT License
+ 
+ Copyright (c) 2017 Huu Nguyen, licensed under the MIT License
  - Xerces-C++ (https://xerces.apache.org/xerces-c)
+ 
  Copyright (c) 2015 The Apache Software Foundation, licensed under the Apache Software License, Version 2.0
  - JsonCpp (http://jsoncpp.sourceforge.net)
+ 
  Copyright (c) 2010 by Baptiste Lepilleur, licensed under the MIT License
  - ICU - International Components for Unicode (http://site.icu-project.org)
+ 
  Copyright (c) 2016 The Unicode(R) Consortium, licensed under the Unicode license
  - libcurl (https://curl.haxx.se)
+ 
  Copyright (c) 1996 - 2017, Daniel Stenberg, daniel@haxx.se, and many contributors,  licensed under a MIT/X derivate license. See [here](https://curl.haxx.se/docs/copyright.html).
 
 
