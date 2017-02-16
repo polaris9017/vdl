@@ -18,6 +18,7 @@ VLive Video Downloader(a.k.a vdl) is video downloader inspired by [youtube-dl](h
 ##Features
 
  - Download specific video from VLive homepage
+ - Download video from VLive channel
 
 ##Usage
 
