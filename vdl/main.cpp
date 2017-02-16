@@ -13,9 +13,13 @@ int main(int argc, char *argv[])
 		}
 		else if (!strcmp(arg, "-d")) //Argument -d (Invalid URL)
 			cerr << "You didn\'t give a valid URL." << endl;
+		else if(!strcmp(arg,"-h")) //Argument -h
+			cout << "Usage: vdl [-v | -d] <URL>" << endl << endl
+			<< "<Option>" << endl << endl << "-v: Show Version" << endl
+			<< "-d <URL>: Download video from URL" << endl;
 		else //Other Argument
 			cerr << "Wrong Argument : " << argv[1] << endl;
-		cout << "Usage: vlive-vdl [-v | -d] <URL>" << endl << endl
+		cout << "Usage: vdl [-v | -d] <URL>" << endl << endl
 			<< "<Option>" << endl << endl << "-v: Show Version" << endl
 			<< "-d <URL>: Download video from URL" << endl;
 		return 0;
@@ -40,7 +44,7 @@ int main(int argc, char *argv[])
 		}
 		else { //Other Argument
 			cerr << "Wrong Argument : " << argv[1] << endl;
-			cout << "Usage: vlive-vdl [-v | -d] <URL>" << endl << endl
+			cout << "Usage: vdl [-v | -d] <URL>" << endl << endl
 				<< "<Option>" << endl << endl << "-v: Show Version" << endl
 				<< "-d <URL>: Download video from URL" << endl;
 			return 0;
@@ -48,8 +52,11 @@ int main(int argc, char *argv[])
 
 	}
 	else if (argc > 3) { //Too Much arguments
-		cerr << "Wrong Argument : " << argv[1] << endl;
-		cout << "Usage: vlive-vdl [-v | -d] <URL>" << endl << endl << endl
+		cerr << "Wrong Argument : ";
+		for (int i = 1; i <= argc; i++)
+			cerr << argv[i];
+		cerr << endl;
+		cout << "Usage: vdl [-v | -d] <URL>" << endl << endl << endl
 			<< "<Option>" << endl << endl << "-v: Show Version" << endl
 			<< "-d <URL>: Download video from URL" << endl;
 		return 0;
