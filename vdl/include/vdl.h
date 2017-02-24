@@ -38,12 +38,12 @@ using namespace std;
 
 namespace VDLDefault {
 	//Input Urls
-	const string URL_VLIVE = "http://vlive.tv/video";
-	const string URL_VLIVE_CH = "http://channels.vlive.tv";
-	const string URL_NAVER = "http://tvcast.naver.com";
-	const string URL_DAUM = "http://tvpot.daum.net";
-	const string URL_FACEBOOK = "http://facebook.com";
-	const string URL_TWITTER = "http://twitter.com";
+	const string URL_VLIVE = "vlive.tv/video";
+	const string URL_VLIVE_CH = "channels.vlive.tv";
+	const string URL_NAVER = "tvcast.naver.com";
+	const string URL_DAUM = "tvpot.daum.net";
+	const string URL_FACEBOOK = "facebook.com";
+	const string URL_TWITTER = "twitter.com";
 
 	//Internal Urls
 	const string URL_INTERNAL_NAVER = "http://play.rmcnmv.naver.com/vod/play/";
@@ -56,7 +56,7 @@ namespace VDLDefault {
 
 	//Internal Constants
 	const string VDL_CODENAME = "R U Ready";
-	const string VDL_VERSION = "019902";
+	const string VDL_VERSION = "019903";
 	const string VLIVE_VIDEO_PARAM = "\\bvlive\\.video\\.init\\(([^)]+)";
 	const string VLIVE_VIDEO_CREATOR = "<div[^>]+class=\"info_area\"[^>]*>\\s*<a\\s+[^>]*>([^<]+)";
 	const string VLIVE_VIDEO_TITLE = "<meta[^\\n]+=\\\"og:title\\\" content=\\\"([^]+)\"\\/>[^]+\\\"og:url\"";
