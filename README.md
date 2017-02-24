@@ -34,7 +34,6 @@ or execute directly.
 
 ##Planned
 
- - Download whole video in channel from VLive homepage
  - Support download from
    - Naver TVCast
    - Daum TVPot
