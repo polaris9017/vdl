@@ -40,13 +40,13 @@ namespace VDLDefault {
 	//Input Urls
 	const string URL_VLIVE = "vlive.tv/video";
 	const string URL_VLIVE_CH = "channels.vlive.tv";
-	const string URL_NAVER = "tvcast.naver.com";
+	const string URL_NAVER = "tv.naver.com";
 	const string URL_DAUM = "tvpot.daum.net";
 	const string URL_FACEBOOK = "facebook.com";
 	const string URL_TWITTER = "twitter.com";
 
 	//Internal Urls
-	const string URL_INTERNAL_NAVER = "http://play.rmcnmv.naver.com/vod/play/";
+	const string URL_INTERNAL_NAVER = "http://play.rmcnmv.naver.com/vod/play/v2.0/";
 	const string URL_INTERNAL_FACEBOOK = "https://graph.facebook.com/v2.7/";
 	const string URL_INTERNAL_VLIVE = "http://global.apis.naver.com/rmcnmv/rmcnmv/vod_play_videoInfo.json";
 	const string URL_INTERNAL_VLIVE_HLS = "http://vlive.hls.edgesuite.net/";
@@ -67,6 +67,7 @@ namespace VDLDefault {
 	const string VLIVE_CH_CHANNEL_CODE = "http:\\/\\/channels\\.vlive\\.tv\\/([\\w\\D]+)\\/video";
 	const string VLIVE_CH_APP_JS = "<script[^>]+src=[\\\"\\'](http.+?\\/app\\.js)";
 	const string VLIVE_CH_APPID = "Global\\.VFAN_APP_ID\\s*=\\s*[\\'\"]([^\\'\"]+)[\\'\"]";
+	const string NAVER_MID = "var rmcPlayer = new nhn\\.rmcnmv\\.RMCVideoPlayer\\(\\\"(.+?)\\\", \\\"(.+?)\\\"";
 
 	//Functions
 	void printInit();
