@@ -12,12 +12,13 @@ bool VLive::Run() {
 
 	string status = param[2], videoid_long = param[5], key = param[6];
 
+	//Determine video status
 	if (status == "LIVE_ON_AIR" || status == "BIG_EVENT_ON_AIR") {
 		VLive_Live m(this->url);
 		return m.Run();
 	}
 	else if (status == "VOD_ON_AIR" || status == "BIG_EVENT_INTRO") {
-		goto run;
+		
 	}
 	else if (status == "LIVE_END") {
 		cerr << print("라이브 방송이 종료되었습니다. 현재 다시보기 준비중입니다.", WRN) << endl;
@@ -36,7 +37,6 @@ bool VLive::Run() {
 		return false;
 	}
 
-run:
 	auto pInfo = LoadPage(URL_INTERNAL_VLIVE,
 		cpr::Parameters{ { "videoId",videoid_long },
 		{ "key",key },
@@ -46,36 +46,33 @@ run:
 
 	cout << print("(1/2) 영상 정보 불러오는 중...") << endl;
 
-	UnicodeString v_creator = v_creator.fromUTF8(Parse(r, VLIVE_VIDEO_CREATOR)[1]);
-	UnicodeString title_u = title_u.fromUTF8(Parse(r, VLIVE_VIDEO_TITLE)[1]);
+	//UnicodeString v_creator = v_creator.fromUTF8(Parse(r, VLIVE_VIDEO_CREATOR)[1]);
+	UnicodeString title_u = title_u.fromUTF8(ParseJson(pInfo)["meta"]["subject"].asString());
 	wstring title = title_u.getBuffer();
 	decodeHtmlEntity(title);
 
 	Json::Value json_list = ParseJson(pInfo)["videos"]["list"];
 	int json_last_list = json_list.size() - 1;
 	string *json_url = new string[json_list.size()];
-	int *json_h = new int[json_list.size()],
-		*json_w = new int[json_list.size()];
+	string *json_res = new string[json_list.size()];
 	unsigned long *json_fsz = new unsigned long[json_list.size()];
 
 	for (size_t i = 0; i < json_list.size(); ++i) {
 		json_url[i] = json_list[i]["source"].asString();
-		json_h[i] = json_list[i]["encodingOption"]["height"].asInt();
-		json_w[i] = json_list[i]["encodingOption"]["width"].asInt();
+		json_res[i] = json_list[i]["encodingOption"]["name"].asString();
 		json_fsz[i] = stoul(json_list[i]["size"].asString());
 	}
-
+	
 	cout << print("(2/2) 영상 내려받는 중...") << endl << endl
-		<< "영상 해상도: " << json_h[json_last_list] << "P" << endl
+		<< "영상 해상도: " << json_res[json_last_list]<< endl
 		<< "파일 사이즈: " << (float)json_fsz[json_last_list] / (1024 * 1024) << "MB" << endl;
 
-	VDLDefault::Download(json_url[json_last_list], title + L".mp4");
+	VDLDefault::Download(json_url[json_last_list], L"[V LIVE] " + title + L".mp4");
 
 	cout << print("다운로드가 완료되었습니다.") << endl;
 
 	delete[]json_url;
-	delete[]json_h;
-	delete[]json_w;
+	delete[]json_res;
 
 	return true;
 }
@@ -139,8 +136,12 @@ bool VLive_Ch::Run() {
 	cout << endl << VDLDefault::print("채널에 따라서 시간이 다소 소요될 수 있습니다. 계속 진행하시겠습니까? [y/n] : ");
 	 char c = cin.get();
 
-	switch (c)
-	{
+	 while (c != 'y' || c != 'n') {
+		 cout << endl << "다시 입력해주세요.";
+		 c = cin.get();
+	 }
+
+	switch (c) {
 	case 'y':
 		cout << VDLDefault::print("[3/3] 영상 내려받는 중") << endl;
 		for (int i = 0; i < vod_url.size() - 1; i++) {
@@ -154,10 +155,6 @@ bool VLive_Ch::Run() {
 		return true;
 		break;
 	case 'n':
-		cerr << VDLDefault::print("Aborted", ERR) << endl;
-		return false;
-		break;
-	default:
 		cerr << VDLDefault::print("Aborted", ERR) << endl;
 		return false;
 		break;
