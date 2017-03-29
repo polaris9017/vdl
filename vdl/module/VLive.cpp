@@ -46,7 +46,6 @@ bool VLive::Run() {
 
 	cout << print("(1/2) 영상 정보 불러오는 중...") << endl;
 
-	//UnicodeString v_creator = v_creator.fromUTF8(Parse(r, VLIVE_VIDEO_CREATOR)[1]);
 	UnicodeString title_u = title_u.fromUTF8(ParseJson(pInfo)["meta"]["subject"].asString());
 	wstring title = title_u.getBuffer();
 	decodeHtmlEntity(title);
@@ -67,25 +66,28 @@ bool VLive::Run() {
 		<< "영상 해상도: " << json_res[json_last_list]<< endl
 		<< "파일 사이즈: " << (float)json_fsz[json_last_list] / (1024 * 1024) << "MB" << endl;
 
-	VDLDefault::Download(json_url[json_last_list], L"[V LIVE] " + title + L".mp4");
+	bool ret = VDLDefault::Download(json_url[json_last_list], L"[V LIVE] " + title + L".mp4");
 
-	cout << print("다운로드가 완료되었습니다.") << endl;
+	if (ret)
+		cout << print("다운로드가 완료되었습니다.") << endl;
+	else
+		cout << print("다운로드가 완료되지 않았습니다.", ERR) << endl;
 
 	delete[]json_url;
 	delete[]json_res;
 
-	return true;
+	return ret;
 }
 
 bool VLive_Live::Run()
 {
 	vector<string> v_id = Parse(this->url, VDLDefault::URL_VLIVE);
-	const string page_body = VDLDefault::LoadPage(this->url).text;
-	auto param = Split(VLive::Parse(page_body, VDLDefault::VLIVE_VIDEO_PARAM)[1], "[\\s\\W]*,[\\s\\W]*");
+	string page_body = VDLDefault::LoadPage(this->url).text;
+	auto param = Split(VLive::Parse(page_body, VDLDefault::VLIVE_VIDEO_PARAM)[1], "[\\s\\W]*,[\\s\\W]*");  //Get live status
 	string status = param[2];
 
 	cout << VDLDefault::print("(1/2) 영상 정보 불러오는 중...") << endl;
-	UnicodeString title_u = title_u.fromUTF8(VLive::Parse(page_body, VDLDefault::VLIVE_VIDEO_TITLE)[1]);
+	UnicodeString title_u = title_u.fromUTF8(VLive::Parse(page_body, VDLDefault::VLIVE_VIDEO_TITLE)[1]);  //set title
 	wstring title = title_u.getBuffer();
 	VDLDefault::decodeHtmlEntity(title);
 
@@ -95,20 +97,22 @@ bool VLive_Live::Run()
 			cpr::Payload{ { "videoSeq",v_id[1] } },
 			cpr::Header{ { "Referer",VDLDefault::URL_VLIVE + "/video" + v_id[1] },
 			{ "Content-Type","application/x-www-form-urlencoded" } }).text;
+		//Get 
 		auto json_live_param = ParseJson(VDLDefault::replace(VDLModule::Parse(r_p, VDLDefault::VLIVE_LIVE_STREAM)[1], "\\\\\"", "\""))["resolutions"];
 		string cdnUrl = json_live_param[json_live_param.size() - 1]["cdnUrl"].asString();
-		string cdnChunklistUrl = VDLDefault::replace(cdnUrl, VDLDefault::VLIVE_LIVE_CONST_PLAYLIST, VDLDefault::VLIVE_LIVE_CONST_CHUNKLIST);
-		string cdnRootUrl = VDLDefault::replace(cdnUrl, VDLDefault::VLIVE_LIVE_CONST_PLAYLIST, "");
-		auto chunkString = cpr::Get(cpr::Url{ cdnChunklistUrl }).text;
+		string cdnChunklistUrl = VDLDefault::replace(cdnUrl, VDLDefault::VLIVE_LIVE_CONST_PLAYLIST, VDLDefault::VLIVE_LIVE_CONST_CHUNKLIST);   //get chunklist m3u8 file
+		string cdnRootUrl = VDLDefault::replace(cdnUrl, VDLDefault::VLIVE_LIVE_CONST_PLAYLIST, "");  //set CDN root url
+		auto chunkString = VDLDefault::LoadPage(cdnChunklistUrl).text;
 
 		for (short i = 1; i <= 3; i++)
 		{
-			string url_ts = cdnRootUrl + VLive::Parse(chunkString, VDLDefault::VLIVE_LIVE_M3U8)[i*2];
-			int len_ts = stoi(VLive::Parse(chunkString, VDLDefault::VLIVE_LIVE_M3U8)[(i * 2) - 1]) * 1000;
-			Download(url_ts, title + L".ts");
-			this_thread::sleep_for(chrono::milliseconds(len_ts - 550));
+			string url_ts = cdnRootUrl + VLive::Parse(chunkString, VDLDefault::VLIVE_LIVE_M3U8)[i*2];  //media url
+			int len_ts = stoi(VLive::Parse(chunkString, VDLDefault::VLIVE_LIVE_M3U8)[(i * 2) - 1]) * 1000;  //media length
+			Download(url_ts, title + L".ts");  //Download video snippet
+			this_thread::sleep_for(chrono::milliseconds(len_ts - 550));  //Sleep for media length
 		}
-		
+
+		page_body = VDLDefault::LoadPage(this->url).text;
 		status = Split(VLive::Parse(page_body, VDLDefault::VLIVE_VIDEO_PARAM)[1], "[\\s\\W]*,[\\s\\W]*")[2];
 	}
 	this->PostProcess(title);
@@ -123,12 +127,12 @@ bool VLive_Ch::Run() {
 		return false;
 	}
 
-	code_channel = VDLModule::Parse(this->url, VDLDefault::VLIVE_CH_CHANNEL_CODE)[1];
+	code_channel = VDLModule::Parse(this->url, VDLDefault::VLIVE_CH_CHANNEL_CODE)[1];  //Get channel code
 
-	string url_app_js = VDLModule::Parse(body_page.text, VDLDefault::VLIVE_CH_APP_JS)[1];
+	string url_app_js = VDLModule::Parse(body_page.text, VDLDefault::VLIVE_CH_APP_JS)[1];  //Get app js URL
 	cout << VDLDefault::print("[1/3] app ID 추출 중") << endl;
-	string app_js = VDLDefault::LoadPage(url_app_js).text;
-	app_id = VDLModule::Parse(app_js, VDLDefault::VLIVE_CH_APPID)[1];
+	string app_js = VDLDefault::LoadPage(url_app_js).text;  //Get app js
+	app_id = VDLModule::Parse(app_js, VDLDefault::VLIVE_CH_APPID)[1];  //Set app id from app js
 
 	vector<string> vod_url = FetchVideoList();
 	string num_vod = to_string(vod_url.size() - 1);

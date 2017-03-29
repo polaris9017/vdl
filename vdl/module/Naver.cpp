@@ -37,12 +37,15 @@ bool Naver::Run()
 		<< "영상 해상도: " << json_res[json_last_list] << endl
 		<< "파일 사이즈: " << (float)json_fsz[json_last_list] / (1024 * 1024) << "MB" << endl;
 
-	VDLDefault::Download(json_url[json_last_list], L"[TVCAST] " + title + L".mp4");
+	bool ret = VDLDefault::Download(json_url[json_last_list], L"[TVCAST] " + title + L".mp4");
 
-	cout << print("다운로드가 완료되었습니다.") << endl;
+	if(ret)
+		cout << print("다운로드가 완료되었습니다.") << endl;
+	else 
+		cout << print("다운로드가 완료되지 않았습니다.",ERR) << endl;
 
 	delete[]json_url;
 	delete[]json_res;
 
-	return true;
+	return ret;
 }
