@@ -136,7 +136,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(ProjectDir)lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>libcurl_imp.lib;cpr.lib;xerces-c_static_3.lib;icudt.lib;icuin.lib;icuio.lib;icuuc.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libcurl_imp.lib;cpr.lib;icudt.lib;icuin.lib;icuio.lib;icuuc.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <ResourceCompile>
       <Culture>0x0412</Culture>
@@ -175,9 +175,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="extern\jsoncpp.cpp" />
+    <ClCompile Include="extern\pugixml.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="module.cpp" />
     <ClCompile Include="module\Daum.cpp" />
+    <ClCompile Include="module\DaumKakao.cpp" />
     <ClCompile Include="module\Facebook.cpp" />
     <ClCompile Include="module\Naver.cpp" />
     <ClCompile Include="module\VLive.cpp" />
