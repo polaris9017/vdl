@@ -45,6 +45,8 @@ unsigned int VDLDefault::Categorize(string url)
 		return TYPE_TVCAST;
 	else if (url.find(VDLDefault::URL_DAUM) != string::npos)
 		return TYPE_TVPOT;
+	else if (url.find(VDLDefault::URL_KAKAO) != string::npos)
+		return TYPE_KAKAO;
 	else if (url.find(VDLDefault::URL_FACEBOOK) != string::npos)
 		return TYPE_FB;
 	else
@@ -210,6 +212,12 @@ bool VDLModule::LoadModule(uint16_t magic)
 		r = m->Run();
 		delete m;
 	}
+	else if (magic == TYPE_KAKAO)
+	{
+		Daum *m = new DaumKakao(this->url);
+		r = m->Run();
+		delete m;
+	}
 	else if (magic == TYPE_FB)
 	{
 		Facebook *m = new Facebook(this->url);
@@ -233,7 +241,7 @@ void VDLModule::printInit()
 	wstring noti = noti_u.getBuffer();
 
 	cout << setw(80) << setfill('=') << "" << endl;
-	cout << print("V App 영상 다운로더 v.") << (*this) << "-rc2 by Moonrise° (DCInside 러블리즈 갤러리)" << endl
+	cout << print("V App 영상 다운로더 v") << (*this) << " by Moonrise° (DCInside 러블리즈 갤러리)" << endl
 		<< "사용법은 게시글을 참조해주세요." << endl;
 	cout << "Codename: " << VDL_CODENAME << endl;
 	cout << setw(80) << setfill('=') << "" << endl << "<공지사항>" << endl;
@@ -366,4 +374,12 @@ vector<string> VLive_Ch::FetchVideoList()
 	list_v.push_back(vod_list["totalVideoCount"].asString());
 
 	return list_v;
+}
+
+void Daum::setTitle(wstring str) {
+	title = str;
+}
+
+void Daum::setUrl(string url) {
+	this->url = url;
 }

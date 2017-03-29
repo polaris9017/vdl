@@ -73,11 +73,26 @@ protected:
 	//ostream& Encode(ostream& in);
 private:
 	string url;
+	wstring title;
 public:
 	Daum(unsigned int major = 1, unsigned int minor = 0, unsigned int rev = 2) :VDLModule(major, minor, rev) {
-		
+		title = L"";
 	}
 	Daum(string url) { this->url = url; }
+	bool Run();
+	void setTitle(wstring str);
+	void setUrl(string url);
+};
+
+//Kakao tv(new version of Daum TVPot)
+class DaumKakao : public Daum {
+private: 
+	string url;
+public:
+	DaumKakao(unsigned int major = 1, unsigned int minor = 0, unsigned int rev = 0) : Daum(major, minor, rev) {
+
+	}
+	DaumKakao(string url) { this->url = url; }
 	bool Run();
 };
 
