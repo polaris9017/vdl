@@ -1,4 +1,4 @@
-#vdl
+# vdl
 
 [![Build Status](https://ci.appveyor.com/api/projects/status/cul1hdta39iys0wl/branch/master?svg=true)](https://ci.appveyor.com/project/qscx9512/vdl/branch/master) [![GitHub license](https://img.shields.io/badge/license-Apache%202-blue.svg)](https://raw.githubusercontent.com/qscx9512/vdl/master/LICENSE)
 
@@ -6,7 +6,7 @@ VLive Video Downloader(a.k.a vdl) is video downloader inspired by [youtube-dl](h
 
 
 
-##Changelog
+## Changelog
 
  - 2.0.0-rc1 (2017.02.08)
    1. Change libraries (pugixml -> Xerces-C)   
@@ -25,7 +25,7 @@ VLive Video Downloader(a.k.a vdl) is video downloader inspired by [youtube-dl](h
    3. Download video from Kakao TV(same service as Daum TVPot)
    4. Bug fix
   
-##Features
+## Features
 
  - Download specific video from VLive homepage
  - Download video from VLive channel
@@ -33,7 +33,7 @@ VLive Video Downloader(a.k.a vdl) is video downloader inspired by [youtube-dl](h
  - Download video from Daum TVPot
  - Download video from Kakao TV
 
-##Usage
+## Usage
 
 > vdl [-v | -d] `<url>`
 
@@ -45,7 +45,7 @@ or execute directly.
 
 
 
-##Planned
+## Planned
 
  - Support download from
    - Facebook
@@ -55,9 +55,9 @@ and more...!
 
 
 
-##How to Build
+## How to Build
 
-###1. For Windows
+### 1. For Windows
 ---------
 **Requires Visual Studio 2015 or latest releases**
 
@@ -70,17 +70,17 @@ and more...!
 
 4. Build it!
 
-###2. For Mac
+### 2. For Mac
 ---------
 coming soon
 
-###3. For Linux
+### 3. For Linux
 ---------
 coming soon
 
 
 
-##License
+## License
 
 This program is licensed under the Apache Software License, Version 2.0.
  
@@ -105,7 +105,7 @@ This program is licensed under the Apache Software License, Version 2.0.
  Copyright (c) 1996 - 2017, Daniel Stenberg, daniel@haxx.se, and many contributors,  licensed under a MIT/X derivated license. See [here](https://curl.haxx.se/docs/copyright.html).
 
 
-##Contact
+## Contact
 
 If you have any problems, suggestions or questions, please contact to moonrise917@gmail.com
 
